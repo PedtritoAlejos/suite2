@@ -39,7 +39,7 @@ class c_valor extends CI_Controller{
         
       
          
-          $this->form_validation->set_message('numeric', 'Ya existe un usuario con ese run');
+          $this->form_validation->set_message('numeric', 'El formato debe ser númerico');
           $this->form_validation->set_message('required', 'El campo {field} es requerido');
           $this->form_validation->set_message('letras_acentos_formato', 'El campo {field} debe contener solo letras');
         
