@@ -28,7 +28,7 @@ class c_valor extends CI_Controller{
         $this->load->view("v_footer");
     }
     
-    public function agregar_valor() {
+    public function agregar_valor() { // este metodo es para ingresar los valores que se toman 
           if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
        
