@@ -39,11 +39,61 @@ class m_valor  extends CI_Model{
            $this->db->where('activo',self::STATUS_ACTIVO);
         return $this->db->get()->result();
     }
+    public function eliminar_valor($idvalor){
+          return  $this->db->set("activo", self::STATUS_DELETED)->where("id_valor", $idvalor)->update("valor");
+    }
+
+
     public function listar_componente(){
         
            $this->db->select('id_componente,nombre_componente');
            $this->db->from('componente');
            $this->db->where('activo',self::STATUS_ACTIVO);
         return $this->db->get()->result();
+    }
+   public function mostrar_resultado($idsistema)
+    {
+       $sql=" select 
+                sistema.id_sistema,
+                valor.id_valor,
+                valor.resultado,
+                componente.id_componente,
+                nombre_componente,
+                valor.fecha
+                /* sub_valor.nombre,
+                sub_valor.resultado */
+                from sistema 
+                join valor on sistema.id_sistema=valor.id_sistema 
+                join componente on componente.id_componente=valor.id_componente
+                /* join sub_valor on valor.id_valor=sub_valor.id_valor*/
+                WHERE sistema.id_sistema=$idsistema and valor.activo='1' ORDER BY componente.id_componente; ";
+       if($query = $this->db->query($sql))
+        {
+            return $query->result();
+        }else{
+            show_error('Error!');
+        }
+    }
+    
+    
+    
+    public function agregar_valores ($resultado,$id_componente,$id_sistema,$id_muestra,$run_autor){
+     date_default_timezone_set('America/Argentina/Salta'); // zona horaria a la de Chile
+     $fecha = date('Y-m-d H:i:s');
+      
+        
+        $data = array(
+                    'id_valor'          => '0',
+                    'resultado'         => $resultado,
+                    'fecha'             => $fecha,
+                    'id_componente'     => $id_componente,
+                    'id_sistema'        =>$id_sistema,
+                    'id_tipo_muestra'   =>$id_muestra,
+                    'run_autor'         =>$run_autor,
+                    'activo'            =>self::STATUS_ACTIVO
+               
+        );
+       
+        return  $this->db->insert('valor', $data);
     }
 }

@@ -27,8 +27,84 @@ class c_valor extends CI_Controller{
         $this->load->view("v_valor", compact("componente","sistema","muestra"));
         $this->load->view("v_footer");
     }
+    public function index_mensaje($mensaje){
+        $componente = $this->listar_componente();
+        $sistema = $this->listar_sistema();
+        $muestra = $this->listar_muestra();
+        
+        $this->load->view("cabecera");
+        $this->load->view("v_menu_superior");
+        $this->load->view("v_menu_items");
+        $this->load->view("v_valor", compact("componente","sistema","muestra","mensaje"));
+        $this->load->view("v_footer");
+    }
+    public function index_datos($datos,$sistemamsj){
+        $componente = $this->listar_componente();
+        $sistema = $this->listar_sistema();
+        $muestra = $this->listar_muestra();
+        
+        $this->load->view("cabecera");
+        $this->load->view("v_menu_superior");
+        $this->load->view("v_menu_items");
+        $this->load->view("v_valor", compact("componente","sistema","muestra","datos","sistemamsj"));
+        $this->load->view("v_footer");
+    }
+    
+    public function buscar(){
+         $this->form_validation->set_rules('sistema_select', 'Sistema', 'required|numeric');
+         $sis = $this->input->post('sistema_select');
+         $this->form_validation->set_message('numeric', 'El formato debe ser númerico');
+         $this->form_validation->set_message('required', 'El campo {field} es requerido');
+            if($this->form_validation->run()){
+                $codesistema= $this->input->post("sistema_select");
+              $sistemamsj="El código del sistema es : ".$sis;
+
+         $this->index_datos($this->mostrar($codesistema),$sistemamsj);
+             
+            }else{
+                $this->index();
+            }
+    }
+    
+    public function eliminar(){
+        $mensaje="";
+         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+             
+          $this->form_validation->set_rules('id_valor', 'Valor', 'required|numeric');
+             
+          $this->form_validation->set_message('numeric', 'El formato debe ser númerico');
+          $this->form_validation->set_message('required', 'El campo {field} es requerido');
+             
+          if($this->form_validation->run()) /**/
+            {
+              $code =$this->input->post("id_valor");
+              $this->load->model("m_valor");
+              if($this->m_valor->eliminar_valor($code)){
+                 $mensaje="<script>alert('Eliminado correctamente el valor con el código :".$code." ');</script>";
+              }else{
+                   $mensaje="<script>alert('Error al eliminar el valor con el código :".$code." ');</script>";
+              }
+               $this->index_mensaje($mensaje);
+              
+              
+            }else{
+                $this->index();
+            }
+             
+         }else{
+             $this->index();
+         }
+         
+    }
+
+
+    public function mostrar($codesistema){
+        $this->load->model("m_valor");
+      return  $this->m_valor->mostrar_resultado($codesistema);
+    }
     
     public function agregar_valor() { // este metodo es para ingresar los valores que se toman 
+        $mensaje="";
           if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
        
@@ -36,6 +112,8 @@ class c_valor extends CI_Controller{
          $this->form_validation->set_rules('idsistema', 'Sistema', 'required|numeric');
          $this->form_validation->set_rules('idcomponente', 'Componente', 'required|numeric');
          $this->form_validation->set_rules('idmuestra', 'Componente', 'required|numeric');
+         $this->form_validation->set_rules('runusuario', 'Run', 'required|numeric');
+         $this->form_validation->set_rules('resultado', 'Resultado', 'required');
         
       
          
@@ -44,27 +122,28 @@ class c_valor extends CI_Controller{
           $this->form_validation->set_message('letras_acentos_formato', 'El campo {field} debe contener solo letras');
         
           if($this->form_validation->run()) /**/
-          {
+            {
               
-                  
-            if( $this->agregar_usuario_($this->input->post("run"), $this->input->post("dv"), $this->input->post("nombre"), $this->input->post("paterno"), $this->input->post("materno"), $this->input->post("correo"), $this->input->post("clave"), $this->input->post("tipo_usuario"))){
-                $mensaje=' <div class="alert alert-success alert-dismissible" role="alert">
+          
+           if($this->insertar_valor( $this->input->post('resultado'),  $this->input->post('idcomponente'),  $this->input->post('idsistema'),   $this->input->post('idmuestra'), $this->input->post('runusuario'))){
+               $mensaje=' <div class="alert alert-success alert-dismissible" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <strong>Exito!</strong>. Usuario Agregado correctamente</div>';
-                  
-                  $this->index_usuario_mensaje($mensaje);
+  <strong>Exito!</strong>.  Agregado correctamente</div>';
            }else{
-                    
-                 $mensaje=' <div class="alert alert-danger alert-dismissible" role="alert">
+              $mensaje=' <div class="alert alert-danger alert-dismissible" role="alert">
   <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-  <strong>Exito!</strong>. Ocurrio un error al agregar al usuario </div>';
-                 $this->index_usuario_mensaje($mensaje);        
-  }
-               
-          }else{
-              $this->index_usuario();
-          }
+  <strong>Exito!</strong>. No se pudo agregar </div>';
+           }
+           
+            }else{
+                $this->index();
+            }
+            $this->index_mensaje($mensaje);
+          
               
+       }else{
+           echo "ingresa al formulario";
+             $this->index();
        }
         
     }
@@ -79,6 +158,12 @@ class c_valor extends CI_Controller{
       return $this->m_valor->listar_sistema();  
         
     }
+    function insertar_valor($resultado,$id_componente,$id_sistema,$id_muestra,$run_autor) {
+        $this->load->model("m_valor");
+       return $this->m_valor->agregar_valores($resultado,$id_componente,$id_sistema,$id_muestra,$run_autor);
+        
+    }
+    
     public function listar_muestra(){
        $this->load->model("m_valor");
       return $this->m_valor->listar_muestra();  
