@@ -38,25 +38,24 @@
                             <!-- -->
                        <!-- -->
                             
-   <?php 
-
- 
-           
-        $resultado = array('name'        =>'resultado',
-                        'maxlength'      =>'30' ,
-                        'class'          =>'form-control',
-                        'value'          => set_value('resultado'),
-                        'required'       =>'true',
-                        'placeholder'    =>'Ingrese su nombre...');   
-            
-        
-    
-                
-
-?>
+  
                          
                             
-                            <div class="container col-md-6">
+                            <div class="container col-md-12">
+                                <div class="form-group">
+                                    <label> Id valor</label>
+                                   
+                                    <div class="input-group">
+                                        <span class="input-group-addon" id="basic-addon1">Id valor</span>
+                                        
+
+                                        <input type="text" disabled="true" class="form-control" value="<?php echo $idvalor ?>">
+                                        <input type="hidden" name="idvalor" class="form-control" value="<?php echo $idvalor ?>">
+                                        <input type="hidden" name="idsistema" class="form-control" value="<?php echo $idsistema ?>">
+                                      
+                                         </div>       
+                                     
+                                </div>
                                 <div class="form-group">
                                     <label> nombre del componente</label>
                                    
@@ -64,33 +63,31 @@
                                         <span class="input-group-addon" id="basic-addon1">Nombre</span>
                                         
 
-                                           <?php echo form_input($componente); ?>
+                                        <input type="text" disabled="true" name="componente" class="form-control" value="<?php echo $componente ?>">
                                       
                                          </div>       
                                      
                                 </div>
                                
-                                <div class="form-group">
-                                    <label>Seleccione el tipo componente</label>
-                                    <select class="form-control" required="true" name="tipo_componente" >
-                                        <option value="" required="true">Seleccione</option>
-                                        <?php
-                                        foreach ($lista  as $value) {
-                                            echo "<option value='" . $value->id_tipo_componente . "'>" . $value->nombre . "</option>";
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
+                                
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-md-12">
 
                                 <div class="form-group">
-                                    <label>Ingrese una descripción</label>
+                                    <label>Resultado anterior</label>
+                                    <input name="resultado" disabled="true"  value="<?php echo $resultado; ?>" class="form-control"/>
+                               </div>
+                                
+                                
+                             
+                                
+                            </div>
+                            <div class="col-md-12">
 
-                                   <?php echo form_textarea($descripcion); ?>
-                                    
-                                     <?php echo form_error('descripcion','<div class="alert alert-danger alert-dismissible"  role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>', '</div>'); ?>
-                                </div>
+                                <div class="form-group">
+                                    <label>Ingrese el nuevo valor a reemplazar por el anterior</label>
+                                    <textarea name="resultado_nuevo" class="form-control"></textarea>
+                               </div>
                                 
                                 
                              
@@ -105,7 +102,7 @@
                             }
                             ?>
                      
-                        <div class="panel-footer"> <button type="submit"  id="btnAgregar_componente" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span>  Agregar Componente</button> </div>
+                        <div class="panel-footer"> <button type="submit"  id="btnAgregar_componente" class="btn btn-primary"><span class="glyphicon glyphicon-pencil"></span> Actualizar valor</button> </div>
                             
                     </div>
                             <?php echo form_close(); ?>

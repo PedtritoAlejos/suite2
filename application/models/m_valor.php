@@ -75,7 +75,17 @@ class m_valor  extends CI_Model{
         }
     }
     
-    
+    public function actualizar($resultado ,$idvalor) {
+           $data = array(
+                            
+                            'resultado' => $resultado
+                            
+                         );
+                         $this->db->where('id_valor', $idvalor);
+
+           return $this->db->update('valor', $data); 
+        
+    }
     
     public function agregar_valores ($resultado,$id_componente,$id_sistema,$id_muestra,$run_autor){
      date_default_timezone_set('America/Argentina/Salta'); // zona horaria a la de Chile

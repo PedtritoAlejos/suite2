@@ -27,13 +27,13 @@ class c_valor extends CI_Controller{
         $this->load->view("v_valor", compact("componente","sistema","muestra"));
         $this->load->view("v_footer");
     }
-    public function index_formulario($id_valor,$componente,$resultado){
+    public function index_formulario($idvalor, $componente, $resultado,$idsistema){
       
         
         $this->load->view("cabecera");
         $this->load->view("v_menu_superior");
         $this->load->view("v_menu_items");
-        $this->load->view("v_actualizar_valor", compact("id_valor","componente","resultado"));
+        $this->load->view("v_actualizar_valor", compact("idvalor","componente","resultado","idsistema"));
         $this->load->view("v_footer");
     }
     
@@ -64,9 +64,13 @@ class c_valor extends CI_Controller{
        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $this->form_validation->set_rules('id_valor', 'Valor', 'required|numeric');
             $this->form_validation->set_rules('resultado', 'Resultado', 'required');
-            $this->form_validation->set_rules('id_componente', 'Componente', 'required|numeric');
+            $this->form_validation->set_rules('componente', 'Componente', 'required');
             if($this->form_validation->run()){
-                
+                $idvalor =$this->input->post("id_valor");
+                $resultado=$this->input->post("resultado");
+                $componente=$this->input->post("componente");
+                $idsistema=$this->input->post("id_sistema");
+                $this->index_formulario($idvalor, $componente, $resultado,$idsistema);
             }else{
                 $this->index();
             }
@@ -76,6 +80,38 @@ class c_valor extends CI_Controller{
            $this->index();
        }
    } 
+   
+   
+   
+   public function modificar_valor(){
+         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+             $mensaje="";
+            $this->form_validation->set_rules('idvalor', 'Valor', 'required|numeric');
+            $this->form_validation->set_rules('resultado_nuevo', 'Resultado', 'required|xss_clean|strip_tags');
+            
+           if($this->form_validation->run()){
+               
+            $idvalor= $this->input->post("idvalor");
+            $resultado = $this->input->post("resultado_nuevo");
+            $idsistema = $this->input->post("idsistema");
+            $this->load->model("m_valor");
+            if($this->m_valor->actualizar($resultado ,$idvalor)){
+                $mensaje="<script>alert('Actualizado correctamente');</script>";
+            }else{
+                 $mensaje="<script>alert('Error al actualizar');</script>";
+            }
+            $datos =$this->mostrar($idsistema);
+            $this->index_datos($datos, $mensaje) ;
+           }else{
+                $this->index();
+           }
+             
+         }else{
+             $this->index();
+         }
+       
+       
+   }
     
     public function buscar(){
          $this->form_validation->set_rules('sistema_select', 'Sistema', 'required|numeric');
@@ -112,7 +148,9 @@ class c_valor extends CI_Controller{
               }else{
                    $mensaje="<script>alert('Error al eliminar el valor con el código :".$code." ');</script>";
               }
-               $this->index_mensaje($mensaje);
+              $datos =$this->mostrar($this->input->post("id_sistema"));
+              
+               $this->index_datos($datos, $mensaje);
               
               
             }else{
