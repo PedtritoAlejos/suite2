@@ -27,6 +27,16 @@ class c_valor extends CI_Controller{
         $this->load->view("v_valor", compact("componente","sistema","muestra"));
         $this->load->view("v_footer");
     }
+    public function index_formulario($id_valor,$componente,$resultado){
+      
+        
+        $this->load->view("cabecera");
+        $this->load->view("v_menu_superior");
+        $this->load->view("v_menu_items");
+        $this->load->view("v_actualizar_valor", compact("id_valor","componente","resultado"));
+        $this->load->view("v_footer");
+    }
+    
     public function index_mensaje($mensaje){
         $componente = $this->listar_componente();
         $sistema = $this->listar_sistema();
@@ -50,8 +60,26 @@ class c_valor extends CI_Controller{
         $this->load->view("v_footer");
     }
     
+   public function reenviar() {
+       if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $this->form_validation->set_rules('id_valor', 'Valor', 'required|numeric');
+            $this->form_validation->set_rules('resultado', 'Resultado', 'required');
+            $this->form_validation->set_rules('id_componente', 'Componente', 'required|numeric');
+            if($this->form_validation->run()){
+                
+            }else{
+                $this->index();
+            }
+            
+           
+       }else{
+           $this->index();
+       }
+   } 
+    
     public function buscar(){
          $this->form_validation->set_rules('sistema_select', 'Sistema', 'required|numeric');
+         
          $sis = $this->input->post('sistema_select');
          $this->form_validation->set_message('numeric', 'El formato debe ser númerico');
          $this->form_validation->set_message('required', 'El campo {field} es requerido');

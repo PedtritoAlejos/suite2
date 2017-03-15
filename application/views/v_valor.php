@@ -217,12 +217,16 @@
                                  echo "<td>";
                                  echo form_open(base_url("index.php/c_valor/eliminar"));
                                  echo form_hidden("id_valor", $value->id_valor);
-                                 echo form_hidden("id_sistema", $value->id_sistema);
+                                
                                  echo form_submit("btn_eliminar","Eliminar","class='btn btn-danger'");
                                  echo form_close();
                                  echo "</td>";
                                  echo "<td>";
-                                 echo form_open();
+                                 echo form_open(base_url("index.php/c_valor/reenviar"));
+                                 echo form_hidden("id_valor", $value->id_valor);
+                                 echo form_hidden("resultado", $value->resultado);
+                                 echo form_hidden("id_componente", $value->nombre_componente);
+                                   
                                  echo form_submit("btn_actualizar","Actualizar","class='btn btn-success'");
                                  echo form_close();
                                  echo "</td>";
