@@ -20,7 +20,7 @@ class c_crud extends CI_Controller {
     
     public function index(){ //menu de inicio
     
-       
+        if($this->session->userdata('id_tipo_usuario')!=null){
         $nombres = $this->nombres_componentes();
         $tipos_componentes= $this->tipos_componentes();
         $tipos_servicios=$this->listar_tipo_servicios();
@@ -29,6 +29,9 @@ class c_crud extends CI_Controller {
         $this->load->view("v_menu_items");
         $this->load->view("v_formulario", compact("nombres","tipos_componentes","tipos_servicios"));
         $this->load->view("v_footer");
+        }else{
+            redirect(base_url("index.php/c_crud/login"));
+        }
         
     }
 
@@ -188,7 +191,11 @@ class c_crud extends CI_Controller {
                }
       }else{
         
+          if($this->session->userdata('id_tipo_usuario')!=null){
+              $this->index();
+          }else{
                 redirect(base_url("index.php/c_crud/login"));
+          }
       }
   }
 

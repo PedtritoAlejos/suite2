@@ -19,20 +19,29 @@ class c_sistema  extends CI_Controller{
     
     
      public function index(){
+           if($this->session->userdata('id_tipo_usuario')!=null){
        $lista = $this->listar_plataforma();
         $this->load->view("cabecera");
         $this->load->view("v_menu_superior");
         $this->load->view("v_menu_items");
         $this->load->view("v_sistema", compact("lista"));
         $this->load->view("v_footer");
+         }else{
+            redirect(base_url("index.php/c_crud/login"));
+        }
     }
-     public function index_mensaje($mensaje){
-       $lista = $this->listar_plataforma();
+     public function index_mensaje($mensaje){   
+         
+       if($this->session->userdata('id_tipo_usuario')!=null){
+        $lista = $this->listar_plataforma();
         $this->load->view("cabecera");
         $this->load->view("v_menu_superior");
         $this->load->view("v_menu_items");
         $this->load->view("v_sistema", compact("lista","mensaje"));
         $this->load->view("v_footer");
+         }else{
+            redirect(base_url("index.php/c_crud/login"));
+        }
     }
      public function listar_plataforma(){
          $this->load->model("m_sistema");

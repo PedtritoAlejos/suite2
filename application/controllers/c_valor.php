@@ -17,6 +17,7 @@ class c_valor extends CI_Controller{
         parent::_construct();
     }
     public function index(){
+           if($this->session->userdata('id_tipo_usuario')!=null){ // si no inicio sesion lo manda al login
         $componente = $this->listar_componente();
         $sistema = $this->listar_sistema();
         $muestra = $this->listar_muestra();
@@ -26,18 +27,15 @@ class c_valor extends CI_Controller{
         $this->load->view("v_menu_items");
         $this->load->view("v_valor", compact("componente","sistema","muestra"));
         $this->load->view("v_footer");
+        }else{
+            redirect(base_url("index.php/c_crud/login"));
+        }
     }
-    public function index_formulario($idvalor, $componente, $resultado,$idsistema){
-      
-        
-        $this->load->view("cabecera");
-        $this->load->view("v_menu_superior");
-        $this->load->view("v_menu_items");
-        $this->load->view("v_actualizar_valor", compact("idvalor","componente","resultado","idsistema"));
-        $this->load->view("v_footer");
-    }
+   
     
     public function index_mensaje($mensaje){
+        
+       if($this->session->userdata('id_tipo_usuario')!=null){ // si no inicio sesion lo manda al login
         $componente = $this->listar_componente();
         $sistema = $this->listar_sistema();
         $muestra = $this->listar_muestra();
@@ -47,110 +45,76 @@ class c_valor extends CI_Controller{
         $this->load->view("v_menu_items");
         $this->load->view("v_valor", compact("componente","sistema","muestra","mensaje"));
         $this->load->view("v_footer");
+        }else{
+            redirect(base_url("index.php/c_crud/login"));
+        }
     }
-    public function index_datos($datos,$sistemamsj){
-        $componente = $this->listar_componente();
-        $sistema = $this->listar_sistema();
-        $muestra = $this->listar_muestra();
-        
-        $this->load->view("cabecera");
-        $this->load->view("v_menu_superior");
-        $this->load->view("v_menu_items");
-        $this->load->view("v_valor", compact("componente","sistema","muestra","datos","sistemamsj"));
-        $this->load->view("v_footer");
-    }
+   
     
-   public function reenviar() {
-       if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $this->form_validation->set_rules('id_valor', 'Valor', 'required|numeric');
-            $this->form_validation->set_rules('resultado', 'Resultado', 'required');
-            $this->form_validation->set_rules('componente', 'Componente', 'required');
-            if($this->form_validation->run()){
-                $idvalor =$this->input->post("id_valor");
-                $resultado=$this->input->post("resultado");
-                $componente=$this->input->post("componente");
-                $idsistema=$this->input->post("id_sistema");
-                $this->index_formulario($idvalor, $componente, $resultado,$idsistema);
-            }else{
-                $this->index();
-            }
-            
-           
-       }else{
-           $this->index();
-       }
-   } 
-   
-   
-   
-   public function modificar_valor(){
-         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-             $mensaje="";
-            $this->form_validation->set_rules('idvalor', 'Valor', 'required|numeric');
-            $this->form_validation->set_rules('resultado_nuevo', 'Resultado', 'required|xss_clean|strip_tags');
-            
-           if($this->form_validation->run()){
-               
-            $idvalor= $this->input->post("idvalor");
-            $resultado = $this->input->post("resultado_nuevo");
-            $idsistema = $this->input->post("idsistema");
-            $this->load->model("m_valor");
-            if($this->m_valor->actualizar($resultado ,$idvalor)){
-                $mensaje="<script>alert('Actualizado correctamente');</script>";
-            }else{
-                 $mensaje="<script>alert('Error al actualizar');</script>";
-            }
-            $datos =$this->mostrar($idsistema);
-            $this->index_datos($datos, $mensaje) ;
-           }else{
-                $this->index();
-           }
+  
+   public function modificar_valor_ajax(){
+         if($this->input->is_ajax_request())
+        {
+             $this->form_validation->set_rules('cod_valor', 'Sistema', 'required|numeric');
+             $this->form_validation->set_rules('resultado_valor', 'Sistema', 'required|xss_clean|strip_tags');
              
-         }else{
-             $this->index();
-         }
+               $this->form_validation->set_message('numeric', 'El formato debe ser númerico');
+               $this->form_validation->set_message('required', 'El campo {field} es requerido');
+               $this->form_validation->set_message('xss_clean', 'El formato es incorrecto {field}');
+               $this->form_validation->set_message('strip_tags', 'El formato es incorrecto {field}');
+               
+               if($this->form_validation->run()){
+                   
+                   $this->load->model("m_valor");
+                  if( $this->m_valor->actualizar($this->input->post("resultado_valor") ,$this->input->post("cod_valor")) ){
+                      echo json_encode(array("status" => "success"));
+                  }else{
+                       echo json_encode(array("status" => "error"));
+                  }
+                   
+               }else{
+                    echo json_encode(array("error"=> validation_errors()));
+               }
+               
+               
+        }else{
+            $this->index();
+        }
        
        
    }
+   
+   public function listar(){
+       $this->form_validation->set_rules('id_sistema', 'Sistema', 'required|numeric');
+       if($this->form_validation->run()){
+          
+           echo json_encode($this->mostrar($this->input->post("id_sistema")));
+       }else{
+           $this->index();
+       }
+   }
+   
     
-    public function buscar(){
-         $this->form_validation->set_rules('sistema_select', 'Sistema', 'required|numeric');
-         
-         $sis = $this->input->post('sistema_select');
-         $this->form_validation->set_message('numeric', 'El formato debe ser númerico');
-         $this->form_validation->set_message('required', 'El campo {field} es requerido');
-            if($this->form_validation->run()){
-                $codesistema= $this->input->post("sistema_select");
-              $sistemamsj="El código del sistema es : ".$sis;
-
-         $this->index_datos($this->mostrar($codesistema),$sistemamsj);
-             
-            }else{
-                $this->index();
-            }
-    }
     
     public function eliminar(){
-        $mensaje="";
+       
          if ($_SERVER['REQUEST_METHOD'] === 'POST') {
              
-          $this->form_validation->set_rules('id_valor', 'Valor', 'required|numeric');
+          $this->form_validation->set_rules('code_valor', 'Valor', 'required|numeric');
              
           $this->form_validation->set_message('numeric', 'El formato debe ser númerico');
           $this->form_validation->set_message('required', 'El campo {field} es requerido');
              
           if($this->form_validation->run()) /**/
             {
-              $code =$this->input->post("id_valor");
+              $code =$this->input->post("code_valor");
               $this->load->model("m_valor");
               if($this->m_valor->eliminar_valor($code)){
-                 $mensaje="<script>alert('Eliminado correctamente el valor con el código :".$code." ');</script>";
+               echo json_encode(array("status" => "success"));
               }else{
-                   $mensaje="<script>alert('Error al eliminar el valor con el código :".$code." ');</script>";
+                  echo json_encode(array("status" => "error"));
               }
-              $datos =$this->mostrar($this->input->post("id_sistema"));
-              
-               $this->index_datos($datos, $mensaje);
+            
               
               
             }else{
@@ -179,7 +143,7 @@ class c_valor extends CI_Controller{
          $this->form_validation->set_rules('idcomponente', 'Componente', 'required|numeric');
          $this->form_validation->set_rules('idmuestra', 'Componente', 'required|numeric');
          $this->form_validation->set_rules('runusuario', 'Run', 'required|numeric');
-         $this->form_validation->set_rules('resultado', 'Resultado', 'required');
+         $this->form_validation->set_rules('resultado', 'Resultado', 'required|xss_clean|strip_tags');
         
       
          

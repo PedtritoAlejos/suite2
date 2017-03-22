@@ -17,20 +17,26 @@ class c_tipo_muestra extends CI_Controller{
          parent::_construct();
     }
     public function index(){
-       
+        if($this->session->userdata('id_tipo_usuario')!=null){ // si no inicio sesion lo manda al login
         $this->load->view("cabecera");
         $this->load->view("v_menu_superior");
         $this->load->view("v_menu_items");
         $this->load->view("v_tipomuestra");
         $this->load->view("v_footer");
+        }else{
+            redirect(base_url("index.php/c_crud/login"));
+        }
     }
     public function index_mensaje($mensaje){
-       
+        if($this->session->userdata('id_tipo_usuario')!=null){ // si no inicio sesion lo manda al login
         $this->load->view("cabecera");
         $this->load->view("v_menu_superior");
         $this->load->view("v_menu_items");
         $this->load->view("v_tipomuestra",  compact("mensaje"));
         $this->load->view("v_footer");
+        }else{
+            redirect(base_url("index.php/c_crud/login"));
+        }
     }
     //lista los datos
     public function listar_muestra() {

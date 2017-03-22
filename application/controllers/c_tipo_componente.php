@@ -17,20 +17,26 @@ class c_tipo_componente extends CI_Controller {
     }
     
     public function index() {
-      
+       if($this->session->userdata('id_tipo_usuario')!=null){ // si no inicio sesion lo manda al login
         $this->load->view("cabecera");
         $this->load->view("v_menu_superior");
         $this->load->view("v_menu_items");
         $this->load->view("v_tipo_componente");
         $this->load->view("v_footer");
+         }else{
+            redirect(base_url("index.php/c_crud/login"));
+        }
     }
     public function index_mensaje($mensaje) {
-      
+       if($this->session->userdata('id_tipo_usuario')!=null){ // si no inicio sesion lo manda al login
         $this->load->view("cabecera");
         $this->load->view("v_menu_superior");
         $this->load->view("v_menu_items");
         $this->load->view("v_tipo_componente", compact("mensaje"));
         $this->load->view("v_footer");
+         }else{
+            redirect(base_url("index.php/c_crud/login"));
+        }
     }
 
     public function listar_tipos_componentes() {

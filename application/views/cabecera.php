@@ -80,6 +80,11 @@ var base_url ;
                  //llamo al metodo de actualizar plataforma
                   modificar_plataforma_ajax();
                 });
+                $("#form_updatetipousuario").submit(function(e){
+                    e.preventDefault();
+                 //llamo al metodo de actualizar tipo usuario
+                modificar_tipo_usuario_ajax();
+                });
                 $("#form_update_tmuestra").submit(function(e){
                     e.preventDefault();
                  //llamo al metodo de actualizar tipo muestra
@@ -98,6 +103,11 @@ var base_url ;
 //                     $("#form_insert").submit();
                    document.getElementById("form_insert").submit();
                  }
+               
+                });
+               $("#form_updatevalor").submit(function (e){
+                    e.preventDefault();
+                 modificar_valor_ajax();
                
                 });
             });

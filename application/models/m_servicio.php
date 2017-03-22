@@ -21,4 +21,78 @@ class m_servicio extends CI_Model {
             return false;
         }
     }
+    /* metodo del alejandro */
+    public function inser_serv($id_servicio, $nombre, $descripcion, $activo_serv, $id_tipo, $id_usuario, $id_cliente) {
+        $data = array(
+            'id_servicio' => $id_servicio,
+            'nombre' => $nombre,
+            'descripcion ' => $descripcion,
+            'activo' => $activo_serv,
+            'id_tipo_servicio' => $id_tipo,
+            'run_usuario' => $id_usuario,
+            'id_cliente' => $id_cliente
+        );
+        return $this->db->insert('servicio', $data);
+    }
+
+    public function get_serv() {
+        $this->db->where('activo', 1);
+        $query = $this->db->get('servicio');
+        if ($query->num_rows() > 0) {
+
+            return $query->result();
+        }
+    }
+
+    public function delete_serv($id) {
+
+
+        $data = array(
+            'activo' => '0'
+        );
+
+        $this->db->where('id_servicio', $id);
+        $this->db->update('servicio', $data);
+    }
+
+    public function edit_serv($id_servicio, $nombre, $descripcion) {
+
+        $fecha = date('Y-m-d');
+
+        $data = array(
+            'nombre' => $nombre,
+            'descripcion ' => $descripcion
+        );
+
+        $this->db->where('id_servicio', $id_servicio);
+        $this->db->update('servicio', $data);
+    }
+
+    public function get_tipo() {
+        $this->db->where('activo', 1);
+        $query = $this->db->get('tipo_servicio');
+        if ($query->num_rows() > 0) {
+
+            return $query->result();
+        }
+    }
+
+    public function get_usu() {
+        $this->db->where('activo', 1);
+        $query = $this->db->get('usuario');
+        if ($query->num_rows() > 0) {
+
+            return $query->result();
+        }
+    }
+
+    public function get_clien() {
+        $this->db->where('activo', 1);
+        $query = $this->db->get('cliente');
+        if ($query->num_rows() > 0) {
+
+            return $query->result();
+        }
+    }
+
 }

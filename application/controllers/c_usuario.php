@@ -18,6 +18,7 @@ class c_usuario extends CI_Controller {
         parent::_construct();
     }
     public function index_usuario(){
+           if($this->session->userdata('id_tipo_usuario')!=null){ // si no inicio sesion lo manda al login
         $lista =$this->listar_tipos_usuarios();
       
         $this->load->view("cabecera");
@@ -25,14 +26,21 @@ class c_usuario extends CI_Controller {
         $this->load->view("v_menu_items");
         $this->load->view("v_usuario", compact("lista"));
         $this->load->view("v_footer");
+        }else{
+            redirect(base_url("index.php/c_crud/login"));
+        }
     }
     public function index_usuario_mensaje($mensaje){
+           if($this->session->userdata('id_tipo_usuario')!=null){ // si no inicio sesion lo manda al login
         $lista =$this->listar_tipos_usuarios();
         $this->load->view("cabecera");
         $this->load->view("v_menu_superior");
         $this->load->view("v_menu_items");
         $this->load->view("v_usuario", compact("lista","mensaje"));
         $this->load->view("v_footer");
+        }else{
+            redirect(base_url("index.php/c_crud/login"));
+        }
     }
     
 
@@ -46,7 +54,7 @@ class c_usuario extends CI_Controller {
       return $this->m_usuario->mostrar_tipos_usuarios();  
         
     }
-    public function eliminar_usuario(){
+    public function eliminar_tipousuario(){
          
         if($this->input->is_ajax_request())
         {

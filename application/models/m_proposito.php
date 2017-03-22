@@ -22,4 +22,59 @@ class m_proposito  extends CI_Model{
             return false;
         }
     }
+    
+    /* metodo del alejandro*/
+     public function inser_pro($id_proposito,$nombre,$descripcion,$observacion_final,$activo_pro) {
+        $data = array(
+            'id_proposito' => $id_proposito,
+            'nombre' => $nombre,
+              'descripcion ' => $descripcion,
+            'observacion_final'=> $observacion_final,
+            'activo_pro' => $activo_pro
+          
+        ); 
+        return $this->db->insert('proposito', $data);
+    }
+    public function get_pro()
+	{
+                 $this->db->where('activo_pro',1);
+		$query = $this->db->get('proposito');
+		if($query->num_rows() > 0)
+		{
+
+			return $query->result();
+
+		}
+
+	}
+    public function delete_pro($id)
+	{
+
+		
+        $data = array(
+
+			'activo_pro' => '0'
+        ); 
+
+		$this->db->where('id_proposito',$id);
+		$this->db->update('proposito',$data);
+		
+
+	}
+    public function edit_pro($id_proposito,$nombre,$descripcion,$observacion_final)
+	{
+
+		$fecha = date('Y-m-d');
+
+		$data = array(
+
+			'nombre' => $nombre,
+              'descripcion ' => $descripcion,
+            'observacion_final'=> $observacion_final
+        ); 
+
+		$this->db->where('id_proposito',$id_proposito);
+		$this->db->update('proposito',$data);
+
+	}
 }

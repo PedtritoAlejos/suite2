@@ -171,11 +171,11 @@
                     <?php echo form_open(base_url("index.php/c_valor/buscar")); ?>
                     <center><span ><?php if(isset($sistemamsj)){ echo $sistemamsj;} ?></span></center>
                     <div class="input-group">
-                                        <span class="input-group-addon" id="basic-addon1">Sistema</span>
+                                        <span class="input-group-addon" id="basic-addon1">Selecione Sistema</span>
                                         
 
-                                        <select onchange="this.form.submit()" name="sistema_select" required="true" class="form-control" >
-                                            <option value=""> Seleccione un sistema</opction>
+                                        <select id="select_sistema" onchange="getSistema(this);" name="sistema_select" required="true" class="form-control" >
+                                            <option value="seleccione">Seleccione</option>
                                                  <?php
                                         foreach ($sistema  as $value) {
                                             echo "<option value='" . $value->id_sistema . "'>" . $value->nombre . "</option>";
@@ -189,66 +189,38 @@
                 </div>
                   <?php echo form_close(); ?>
             </div>
-            <div class="table-responsive">          
-                <div class="panel-body">
+            
+            <!-- tabla antigua  -->
+            
+           
+          
+            <div  class="table-responsive">          
+                <div  class="panel-body">
                     <div class="col-md-12">
-                            <?php  if(isset($datos)) {
-                                ?>
-                        <div class="table-responsive">
-                        <table class="table table-bordered">
-                           
+                            
+                        <div id="panelsistema" class="table-responsive">
+                        <table id="tbl_valores" class="table table-bordered">
+                          <thead >  
                             <tr>
+<!--                                <th>Opciones</th>
+                                <th>Id sistema</th>
                                 <th>Id valor</th>
                                 <th>Resultado</th>
                                 <th>Id componente</th>
                                 <th>Nombre componente</th>
-                                <th>Fecha</th>
-                                <th>Eliminar</th>
-                                <th>Modificar</th>
-                            </tr>
-                            <?php 
-                             foreach ($datos  as $value) {
-                                 echo "<tr>";
-                                 echo "<td>".$value->id_valor."</td>";
-                                 echo "<td>".$value->resultado."</td>";
-                                 echo "<td>".$value->id_componente."</td>";
-                                 echo "<td>".$value->nombre_componente."</td>";
-                                 echo "<td>".$value->fecha."</td>";
-                                 echo "<td>";
-                                 echo form_open(base_url("index.php/c_valor/eliminar"));
-                                 echo form_hidden("id_valor", $value->id_valor);
-                                 echo form_hidden("id_sistema", $value->id_sistema);
+                                <th>Fecha</th>-->
                                 
-                                 echo form_submit("btn_eliminar","Eliminar","class='btn btn-danger'");
-                                 echo form_close();
-                                 echo "</td>";
-                                 echo "<td>";
-                                 echo form_open(base_url("index.php/c_valor/reenviar"));
-                                 echo form_hidden("id_valor", $value->id_valor);
-                                 echo form_hidden("resultado", $value->resultado);
-                                 echo form_hidden("componente", $value->nombre_componente);
-                                 echo form_hidden("id_sistema", $value->id_sistema);  
-                                 echo form_submit("btn_actualizar","Actualizar","class='btn btn-success'");
-                                 echo form_close();
-                                 echo "</td>";
-                                 echo "</tr>";    
-                                   }
-                           
-                            
-                            
-                            ?>
-                            
+                            </tr>
+                            </thead>
                         </table>
                         </div>
                         
-                                <?php 
-                            } ?>
-                       
+                                
 
                     </div>
                 </div>
             </div>
-
+<!--   fin de la tabla antigua --->
             <div class="panel-footer">
                 <div class="row">
 
@@ -278,9 +250,127 @@
     </style>
     <div class="row">
 
+        <form id="form_updatevalor">
+          <div class="modal fade" id="modal_formulario_valor" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header alerta_azul">
+                <button type="button" class="close" 
+                   data-dismiss="modal">
+                       <span aria-hidden="true">&times;</span>
+                       <span class="sr-only">Cerrar</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    <span class="glyphicon glyphicon-folder-open"> </span> &nbsp;
+                    Actualizar valor
+                </h4>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <div id="msj"></div>
+                <div class="input-group">
+                     <span class="input-group-addon"  id="basic-addon1">Código valor</span>
+                     <input type="number" class="form-control" disabled="true" id="cod_v"  maxlength="10" required="true"  aria-describedby="basic-addon1">
+                 </div>       
+           
+              <br>
+               <div class="input-group">
+               <span class="input-group-addon" id="basic-addon2">Nombre componente</span>    
+               <input type="text" class="form-control" id="componente" disabled="true"  required="true" placeholder="Ingrese.." aria-describedby="basic-addon2">
+               </div>
+              
+              <br>
+              <div class="input-group">
+               <span class="input-group-addon" id="basic-addon2">Fecha registro</span>    
+               <input type="text" class="form-control" id="fecha" disabled="true"  required="true" placeholder="Ingrese.." aria-describedby="basic-addon2">
+               </div>
+              <br>
+               <div class="input-group">
+                  <span class="input-group-addon" id="basic-addon2">Resultado actual</span>    
+                  <textarea  id="resultado_v" class="form-control" disabled="true" required="true"  placeholder="Ingrese.." aria-describedby="basic-addon2"></textarea>
+                 
+               </div>
+              <br>
+               <div class="input-group">
+                  <span class="input-group-addon" id="basic-addon2">Ingresa el nuevo resultado para modificar</span>    
+                  <textarea  id="resultado_valor_nuevo" class="form-control"  required="true"  placeholder="Ingrese.." aria-describedby="basic-addon2"></textarea>
+                 
+               </div>
+                  
+            </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">
+                    <span class="glyphicon glyphicon-remove-sign"></span>  Cerrar
+                </button>
+                <button type="submit" class="btn btn-primary"  ><span class="glyphicon glyphicon-refresh"></span> Actualizar datos</button>
+               
+                   
+              
+            
+            </div>
+            
+        </div>
+    </div>
+</div>
+    <!-- -->
+    </form>
+        
+        
+        
+<div id="modaldelete_valor" class="modal fade" role="dialog">
+            <div class="modal-dialog">
 
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header alert alert-info">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-pushpin"></span> Mensaje</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p> </p>
+                    </div>
+                    <div class="modal-footer ">
+                        <input type="hidden" id="id_valor">
+
+                        <button type="button" class="btn btn-danger grupo1" onclick="eliminar_valor_ajax()"><span class="glyphicon glyphicon-trash"></span> Eliminar</button>
+                        <button type="button" class="btn btn-default grupo2" data-dismiss="modal"><span class="glyphicon glyphicon-remove-circle"></span> Cerrar</button>
+                        <button type="button" class="btn btn-default grupo1"  data-dismiss="modal"><span class="glyphicon glyphicon-remove"> </span> Cancelar</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
        
+<div id="modalmensaje" class="modal fade" role="dialog">
+            <div class="modal-dialog">
 
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header  alerta_azul">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title"><span class="glyphicon glyphicon-pushpin"></span> Mensaje</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p></p>
+                    </div>
+                    <div class="modal-footer ">
+                        <input type="hidden" id="run_usuario">
+
+
+                        <button type="button" class="btn btn-default grupo2" id="btnmensaje" data-dismiss="modal"><span class="glyphicon glyphicon-remove-circle"></span> Cerrar</button>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>   
         
            
 

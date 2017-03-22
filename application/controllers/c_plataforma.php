@@ -16,7 +16,9 @@ class c_plataforma extends CI_Controller{
      public function _construct() {
          parent::_construct();
     }
+    
     public function index(){
+          if($this->session->userdata('id_tipo_usuario')!=null){
         $lista=$this->listar_cliente();
         $lista_ts=$this->mostrar_ts();
         $this->load->view("cabecera");
@@ -24,8 +26,12 @@ class c_plataforma extends CI_Controller{
         $this->load->view("v_menu_items");
         $this->load->view("v_plataforma", compact("lista","lista_ts"));
         $this->load->view("v_footer");
+        }else{
+            redirect(base_url("index.php/c_crud/login"));
+        }
     }
     public function index_mensaje($mensaje){
+          if($this->session->userdata('id_tipo_usuario')!=null){
         $lista=$this->listar_cliente();
         $lista_ts=$this->mostrar_ts();
         $this->load->view("cabecera");
@@ -33,6 +39,10 @@ class c_plataforma extends CI_Controller{
         $this->load->view("v_menu_items");
         $this->load->view("v_plataforma", compact("lista","lista_ts","mensaje"));
         $this->load->view("v_footer");
+        }else{
+            redirect(base_url("index.php/c_crud/login"));
+        }
+        
     }
    
     public function mostrar_ts(){
